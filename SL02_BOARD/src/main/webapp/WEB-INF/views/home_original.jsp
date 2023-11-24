@@ -65,20 +65,7 @@ security
  org.doit.ky.mapper 패키지 > BoardMapper 인터페이스 추가
  resources > org.doit.ky.mapper 폴더 > BoardMapper.xml 추가
 5. Homecontroller 복사 > BoardController 생성
-6. home.jsp 복사 > home_original.jsp 생성 
-7. org.doit.ky.service 패키지 > BoardService 인터페이스 추가 > BoardServiceImpl 클래스 추가
-8. servlet-context.xml : <context:component-scan base-package="org.doit.ky" />
-base-packge 패키지 및 하위 패키지를 찾아 component을 자동 스캔해서 스프링빈 객체로 등록 + 연결
-@Component
-@Controller
-@Service
-@Repository
-9. servlet-context.xml : ViewResolver 등록
-10. webapp > board > list 파일 생성 ( 요청 URL 사용)
-11. 글쓰기 페이지 응답 > register.jsp 추가 , Controller 추가 코딩   
-12. 글쓰기 작업 > BoardMapper 추가 코딩  
-
- 
+6. home.jsp > home_original.jsp 변경 
  </xmp>  
 </div>
 </body>
