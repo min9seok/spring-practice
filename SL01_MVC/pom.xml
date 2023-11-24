@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.doit</groupId>
 	<artifactId>ky</artifactId>
-	<name>SL00_DefaultSettings</name>
+	<name>SL01_MVC</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>

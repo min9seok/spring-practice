@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.doit.ky.mapper.BoardMapper">
+
+     <select id="getList" resultType="org.doit.ky.domain.BoardVO">
+     <![CDATA[
+	  SELECT *
+	  FROM tbl_board
+	  WHERE bno > 0
+	  ORDER BY bno DESC
+	  ]]>      
+     </select>
+     
+	 <insert id="insert">
+	 INSERT INTO tbl_board(bno, title, content, writer)
+	 VALUES(seq_board.nextval, #{title}, #{content}, #{writer} )
+	 </insert>
+	 <insert id="insertSelectKey">
+	 <selectKey order="BEFORE" resultType="long" keyProperty="bno">
+	 SELECT seq_board.nextval
+	 FROM dual
+	 </selectKey>
+	 INSERT INTO tbl_board(bno, title, content, writer)
+	 VALUES(#{bno},#{title}, #{content}, #{writer} )
+	 </insert>
+		 
+	 <select id="view" resultType="org.doit.ky.domain.BoardVO">    
+	  SELECT *
+	  FROM tbl_board
+	  WHERE bno = #{bno}	  	 
+     </select>	 
+     
+     <update id="update">
+     UPDATE tbl_board
+     SET title = #{title}
+        ,content = #{content}
+        ,updatedate = SYSDATE
+     WHERE bno = #{bno}
+     </update>
+     
+     <delete id="delete">
+      DELETE FROM tbl_board
+      WHERE bno = #{bno}
+     </delete>
+</mapper>
