@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.doit.ky.mapper.scott.EmpMapper">
+
+     <select id="selectEmp" parameterType="java.util.List" resultType="org.doit.ky.domain.EmpDTO">
+         SELECT *
+         FROM emp
+<!--          WHERE deptno IN ( 10, 30 ) -->
+		<where>
+		  <foreach item="deptno" index="index" collection="list" open="deptno IN (" separator="," close=")" >		  
+		     #{deptno}
+		  </foreach>
+		</where>
+         ORDER BY deptno          
+     </select>
+	 
+
+	
+</mapper>
