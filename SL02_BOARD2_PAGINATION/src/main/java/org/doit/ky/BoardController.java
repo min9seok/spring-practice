@@ -1,6 +1,8 @@
 package org.doit.ky;
 
 import org.doit.ky.domain.BoardVO;
+import org.doit.ky.domain.Criteria;
+import org.doit.ky.domain.PageDTO;
 import org.doit.ky.service.BoardService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +23,22 @@ public class BoardController {
 
 	private BoardService boardService;
 	
+//	@RequestMapping("/list")
+//	public void list(Model model) {
+//		log.info("> /board/list");
+//			
+//		model.addAttribute("list", this.boardService.getList() );
+//	}
+	
 	@RequestMapping("/list")
-	public void list(Model model) {
-		log.info("> /board/list");
-			
-		model.addAttribute("list", this.boardService.getList() );
+	public void list(Criteria criteria, Model model) {
+		log.info("> /board/list");			
+		model.addAttribute("list", this.boardService.getListWithPaging(criteria) );
+		int total = this.boardService.getTotal(criteria);
+		model.addAttribute("pageMaker",new PageDTO(criteria, total));
+		
 	}
-//	@RequestMapping(value = "/register")
+	
 	@GetMapping("/register")
 	public void register() {
 		log.info("> /board/register");
@@ -42,7 +53,7 @@ public class BoardController {
 		return "redirect:/board/list"; // 스프링 리다이렉트 코딩
 	}
 	@GetMapping({"/get", "/modify"})
-	public void view(@RequestParam("bno") Long bno, Model model) {
+	public void get(@RequestParam("bno") Long bno, Model model) {
 		log.info("> /board/view or modify");
 		model.addAttribute("board",this.boardService.get(bno));
 	}

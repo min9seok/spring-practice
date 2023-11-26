@@ -62,11 +62,14 @@
          </tr>
        </tfoot>
      </table>
-     
-  </form>
+     	<input type="hidden" name="pageNum"
+				value="${param.pageNum }" /> <input type="hidden"
+				name="amount" value="${param.amount }" />
+  </form>  				
 <script type="text/javascript">
 $(function(){
 	var form = $("form");
+	var actionForm = $("#actionForm");
 	$("tfoot button").click(function(event){
 		var operation = $(this).data("oper");
 		if(operation === 'modify'){
@@ -85,11 +88,12 @@ $(function(){
 			form.attr({
 				 "action": "/board/list"
 				,"method": "GET"
-			}).empty().submit();			
+			}).submit();			
 		}
 	});
 });
 </script>
+
 </div>
 </body>
 </html>

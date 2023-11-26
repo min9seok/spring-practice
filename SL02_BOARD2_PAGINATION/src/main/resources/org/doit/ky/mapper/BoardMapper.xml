@@ -5,44 +5,67 @@
 
 <mapper namespace="org.doit.ky.mapper.BoardMapper">
 
-     <select id="getList" resultType="org.doit.ky.domain.BoardVO">
+	<select id="getListWithPaging"
+		resultType="org.doit.ky.domain.BoardVO">
+       <![CDATA[
+      SELECT bno, title, content, writer, regdate, updatedate
+      FROM (
+               SELECT /*+INDEX_DESC(tbl_board pk_tblboard_bno )*/
+                      rownum rn, bno, title, content, writer, regdate, updatedate
+               FROM tbl_board 
+               WHERE rownum <= #{ pageNum} * #{ amount }
+            )
+      WHERE rn > (#{ pageNum } - 1) * #{ amount }
+      ]]>
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+     <![CDATA[
+	  SELECT COUNT(*)
+	  FROM tbl_board
+	  WHERE bno > 0	  
+	  ]]>
+	</select>
+
+	<select id="getList" resultType="org.doit.ky.domain.BoardVO">
      <![CDATA[
 	  SELECT *
 	  FROM tbl_board
 	  WHERE bno > 0
 	  ORDER BY bno DESC
-	  ]]>      
-     </select>
-     
-	 <insert id="insert">
-	 INSERT INTO tbl_board(bno, title, content, writer)
-	 VALUES(seq_board.nextval, #{title}, #{content}, #{writer} )
-	 </insert>
-	 <insert id="insertSelectKey">
-	 <selectKey order="BEFORE" resultType="long" keyProperty="bno">
-	 SELECT seq_board.nextval
-	 FROM dual
-	 </selectKey>
-	 INSERT INTO tbl_board(bno, title, content, writer)
-	 VALUES(#{bno},#{title}, #{content}, #{writer} )
-	 </insert>
-		 
-	 <select id="view" resultType="org.doit.ky.domain.BoardVO">    
-	  SELECT *
-	  FROM tbl_board
-	  WHERE bno = #{bno}	  	 
-     </select>	 
-     
-     <update id="update">
-     UPDATE tbl_board
-     SET title = #{title}
-        ,content = #{content}
-        ,updatedate = SYSDATE
-     WHERE bno = #{bno}
-     </update>
-     
-     <delete id="delete">
-      DELETE FROM tbl_board
-      WHERE bno = #{bno}
-     </delete>
+	  ]]>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO tbl_board(bno, title, content, writer)
+		VALUES(seq_board.nextval, #{title}, #{content}, #{writer} )
+	</insert>
+	<insert id="insertSelectKey">
+		<selectKey order="BEFORE" resultType="long"
+			keyProperty="bno">
+			SELECT seq_board.nextval
+			FROM dual
+		</selectKey>
+		INSERT INTO tbl_board(bno, title, content, writer)
+		VALUES(#{bno},#{title}, #{content}, #{writer} )
+	</insert>
+
+	<select id="read" resultType="org.doit.ky.domain.BoardVO">
+		SELECT *
+		FROM tbl_board
+		WHERE bno = #{bno}
+	</select>
+
+	<update id="update">
+		UPDATE tbl_board
+		SET title = #{title}
+		,content = #{content}
+		,updatedate = SYSDATE
+		WHERE bno = #{bno}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM tbl_board
+		WHERE bno = #{bno}
+	</delete>
 </mapper>

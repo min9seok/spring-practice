@@ -3,6 +3,7 @@ package org.doit.ky.service;
 import java.util.List;
 
 import org.doit.ky.domain.BoardVO;
+import org.doit.ky.domain.Criteria;
 import org.doit.ky.mapper.BoardMapper;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,18 @@ public class BoardServiceImpl implements BoardService {
 	public boolean remove(Long bno) {
 		log.info("> Impl delete");
 		return this.boardMapper.delete(bno)==1;
+	}
+
+	@Override
+	public List<BoardVO> getListWithPaging(Criteria criteria) {
+		log.info("> Impl getListWithPaging");
+		return this.boardMapper.getListWithPaging(criteria);
+	}
+
+	@Override
+	public int getTotal(Criteria criteria) {
+		log.info("> Impl getTotal");
+		return this.boardMapper.getTotalCount(criteria);
 	}
 
 }
