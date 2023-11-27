@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">	
+ 
+ <context:component-scan base-package="org.doit.ky"/>
+<!--  스프링 AOP : 프록시(proxy) 기반 -->
+ <bean id="calcProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+<!--    1. 핵심 기능하는 실제 객체(target) -->
+   <property name="target" ref="calculatorImpl3"></property>
+<!--    2. pointcout 설정 -->
+   <property name="proxyInterfaces">
+     <list>
+       <value>org.doit.ky.aop.Calculator</value>
+     </list>
+   </property>
+<!--    3. advice 등록 -->
+   <property name="interceptorNames">
+     <list>
+       <value>logPrintAroundAdvice3</value>
+       <value>logPrintBeforeAdvice3</value>
+       <value>logPrintAfterReturningAdvice3</value>
+     </list>
+   </property>
+ </bean>
+
+</beans>
