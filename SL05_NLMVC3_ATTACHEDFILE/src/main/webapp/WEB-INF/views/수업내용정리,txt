@@ -1,0 +1,17 @@
+스프링 파일 업로드/다운로드
+ p438
+1. servlet-context.xml > CommonsMultipartResolver 추가
+ p442
+1. 업로드한 파일 접근 방법
+ MultipartFile 인터페이스  
+ @RequestParam  
+ MultHttpServletRequest
+ 커맨드 객체 ***
+ NOticeVO vo == 제목,내용,첨부파일
+
+ 공지사항 상세보기 
+ noticeDetail.jsp 삭제 버튼 클릭
+ 첨부 파일 유무 > 첨부파일 삭제 
+ 
+ 공지사항 수정
+ 첨부파일 유무 수정 
