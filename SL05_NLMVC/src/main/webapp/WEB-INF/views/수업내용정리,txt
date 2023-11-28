@@ -1,0 +1,39 @@
+1. org.doit.ky.domain
+2. org.doit.ky.controller 
+3. org.doit.ky.persistence
+4. org.doit.ky.service
+
+5. ddl.sql 생성 
+6. MemberVO(Dao),NoticeVO(Dao) 파일 생성 수정
+7. WebContent css~js / index.css jsp > webapp 복사
+--css--
+ customer 공지사항
+ joinus  회원
+ --customer--
+ notice.css
+ 
+ notice.jsp       목록
+ noticeDetail.jsp 상세보기
+ noticeEdit.jsp   수정
+ noticeReg.jsp    쓰기
+ --joinus--
+ join.css 회원가입
+ join.jsp
+ 
+ login.css 로그인
+ login.jsp
+
+8. web.xml url-pattren 수정
+
+9. 컨트롤러 메서드 구현 X
+ JSP  CommandHandler.java
+        process 추상메서드
+      ListHandler implements CommandHandler
+      @Override
+      process{}
+      
+ NoticeController.java 추가
+ servlet-context.xml
+ 
+ 10. noticeDetail.htm?seq=${dto.seq} 요청 처리
+ 
