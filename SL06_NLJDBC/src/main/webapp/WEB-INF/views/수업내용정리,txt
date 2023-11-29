@@ -1,1 +1,40 @@
 p474 Chapter 11. 데이터베이스 연동 지원과 JDBC 지원 
+
+1. DataSource 설정 방법
+ pom.xml 설정 확인
+ 		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+ root-context.xml 설정 확인 
+ <!-- p84 -->
+   <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+     <!--    p102
+     <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+     <property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:XE"></property>
+      -->
+      
+     <property name="driverClassName"    value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
+     <property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:xe"></property>
+     <property name="username" value="scott"></property>
+     <property name="password" value="tiger"></property> 
+   </bean>
+   
+   <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+     <constructor-arg ref="hikariConfig"></constructor-arg>
+   </bean>	
+   
+2. JdbcTemplate 클래스 사용 + 스프링
+ SELECT : query(), queryForList(), queryForObject()
+ I,U,D : update()
+<!-- p486 JdbcTemplate -->
+   <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+     <property name="dataSource" ref="dataSource"></property>
+   </bean>
+   
+<context:component-scan base-package="org.doit.ky" />
+@Component 
+@Repository
+@Controller   
+@Service   
