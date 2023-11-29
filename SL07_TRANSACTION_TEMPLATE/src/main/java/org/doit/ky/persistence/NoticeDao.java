@@ -22,4 +22,7 @@ public interface NoticeDao {
 	public NoticeVO getNotice(String seq) throws ClassNotFoundException, SQLException;
 	// 추가	
 	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException;
+	
+	// 트랜젝션 처리
+	void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException;
 }

@@ -16,10 +16,12 @@ public class MemberVO {
 	private String name;
 	private String gender;
 	private String birth;
-	private String is_Lunar;
+	private String is_lunar;
 	private String cphone;
 	private String email;
 	private String habit;
 	private Date   regdate;
+	
+	private int point;
 	
 }

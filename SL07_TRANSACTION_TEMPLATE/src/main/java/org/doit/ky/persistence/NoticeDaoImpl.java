@@ -12,7 +12,14 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.extern.log4j.Log4j;
 
@@ -20,9 +27,13 @@ import lombok.extern.log4j.Log4j;
 public class NoticeDaoImpl implements NoticeDao  {
 
 	@Autowired
-	private NamedParameterJdbcTemplate template;
+	private NamedParameterJdbcTemplate template;	
 	
+//	@Autowired
+//	private DataSourceTransactionManager transactionManager;
 	
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 	
 	public int getCount(String field, String query) throws ClassNotFoundException, SQLException
 	{
@@ -112,4 +123,74 @@ public class NoticeDaoImpl implements NoticeDao  {
 		return this.template.update(sql, parameterSource);
 				
 	}
+	
+	@Override // 트랜잭션 처리 + 탬플릿 사용
+	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+		// 1. 공지사항 작성
+		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+				    + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+		// 2. 작성자 포인트 증가		
+		String sql2 = " UPDATE member "
+			        + " SET point = point + 1 "
+			        + " WHERE id = :id ";
+		// p514 
+		//                                 WithoutResult : 리턴할 결과값이 없는 경우
+		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+					
+			protected void doInTransactionWithoutResult(TransactionStatus status) {		
+				// 1
+				 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+				 template.update(sql, parameterSource);
+				// 2
+				 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+				 mapSqlParameterSource.addValue("id",id);
+				int count = template.update(sql2, mapSqlParameterSource);
+			}
+		});							
+	}
+	
+	
+//	@Override // 트랜잭션 처리
+//	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+//		// 1. 공지사항 작성
+//		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+//				    + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+//		// 2. 작성자 포인트 증가		
+//		String sql2 = " UPDATE member "
+//			        + " SET point = point + 1 "
+//			        + " WHERE id = :id ";
+//		TransactionDefinition definition = new DefaultTransactionDefinition();
+//		TransactionStatus status = this.transactionManager.getTransaction(definition );
+//		try {
+//			// 1
+//			 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+//			 this.template.update(sql, parameterSource);
+//			// 2
+//			 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+//			 mapSqlParameterSource.addValue("id",id);
+//			int count = this.template.update(sql2, mapSqlParameterSource);			
+//			// 커밋
+//			this.transactionManager.commit(status);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			this.transactionManager.rollback(status);
+//			
+//		}
+//	}
+//	@Override // 트랜잭션 미처리 
+//	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+//		// 1. 공지사항 작성
+//		String sql = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+//				   + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+//		
+//		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+//		 this.template.update(sql, parameterSource);
+//		// 2. 작성자 포인트 증가
+//		 sql = " UPDATE member "
+//		     + " SET point = point + 1 "
+//		     + " WHERE id = :id ";
+//		 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+//		 mapSqlParameterSource.addValue("id",id);
+//		int count = this.template.update(sql, mapSqlParameterSource);
+//	}
 }

@@ -94,7 +94,7 @@
 							<c:when test="${not empty list }">
 								<c:forEach items="${list }" var="dto">
 									<tr>
-										<td class="seq">${dto.seq}}</td>
+										<td class="seq">${dto.seq}</td>
 										<td class="title"><a
 											href="noticeDetail.htm?seq=${dto.seq }">${dto.title }</a></td>
 										<td class="writer">${dto.writer }</td>

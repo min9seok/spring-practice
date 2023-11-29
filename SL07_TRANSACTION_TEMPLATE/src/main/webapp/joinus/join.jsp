@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title>index</title>
 		<link href="join.css" type="text/css" rel="stylesheet" />
@@ -77,7 +77,7 @@
 									아이디
 								</dt>
 								<dd class="join-form-data">
-									<input type="text" name="uid" />
+									<input type="text" name="id" value="kmys" />
 									<input id="btnCheckUid" class="button" type="button" value="중복확인" />
 								</dd>
 							</dl>
@@ -86,7 +86,7 @@
 									비밀번호
 								</dt>
 								<dd class="join-form-data">
-									<input type="password" name="pwd" />
+									<input type="password" name="pwd" value="1234" />
 								</dd>
 							</dl>
 							<dl class="join-form-row">
@@ -102,7 +102,7 @@
 									이름
 								</dt>
 								<dd class="join-form-data">
-									<input type="text" name="name" />
+									<input type="text" name="name" value="쌍용교육센터" />
 								</dd>
 							</dl>
 							<dl class="join-form-row">
@@ -111,7 +111,7 @@
 								</dt>
 								<dd class="join-form-data">
 									<select name="gender">
-										<option>남성</option>
+										<option selected>남성</option>
 										<option>여성</option>
 									</select>
 								</dd>
@@ -122,14 +122,23 @@
 								</dt>
 								<dd class="join-form-data">								
 	                                <span>
-	                                    <input type="text" id="year" />년
-	                                    <input type="text" id="month" />월
-	                                    <input type="text" id="day" />일
-	                                    <input type="hidden" name="Birth" id="Birth" />
+	                                    <input type="text" id="year"  value="1980"/>년
+	                                    <input type="text" id="month" value="12"/>월
+	                                    <input type="text" id="day" value="10"/>일
+	                                    <input type="hidden" name="birth" id="birth" />
+	                                    <script type="text/javascript">
+										  $("#day").blur(function(){
+											 var year = $("#year").val();
+											 var month = $("#month").val();
+											 var day = $("#day").val();
+											 var birth = `\${year}-\${month}-\${day}`;
+											 $("#birth").val(birth);
+										  });
+										</script>
 	                                </span>
 	                                <span class="moon">
-	                                    <input type="radio" name="IsLunar" value="Solar" id="IsSolar" checked />양력
-	                                    <input type="radio" name="IsLunar" value="Lunar" id="IsLunar" />음력
+	                                    <input type="radio" name="is_lunar" value="Solar" id="IsSolar" checked />양력
+	                                    <input type="radio" name="is_lunar" value="Lunar" id="IsLunar" />음력
 	                                </span>
 								</dd>
 							</dl>
@@ -138,7 +147,7 @@
 									핸드폰 번호
 								</dt>
 								<dd class="join-form-data">
-									<input type="text" name="cphone" /><span>[대시(-)를 포함할 것: 예) 010-3456-2934]</span>
+									<input type="text" name="cphone" value="010-1234-1234" /><span>[대시(-)를 포함할 것: 예) 010-3456-2934]</span>
 								</dd>
 							</dl>
 							<dl class="join-form-row">
@@ -146,7 +155,7 @@
 									이메일
 								</dt>
 								<dd class="join-form-data">
-									<input type="text" name="email" />
+									<input type="text" name="email" value="abc@naver.com" />
 								</dd>
 							</dl>
 							<dl class="join-form-row">
@@ -154,16 +163,16 @@
 									취미
 								</dt>
 								<dd class="join-form-data habit">
-									<input type="checkbox" name="habit" id="music" /><label for="music">음악</label>
-									<input type="checkbox" name="habit" id="movie" /><label for="movie">영화</label>
-									<input type="checkbox" name="habit" id="trip" /><label for="trip">여행</label>
+									<input type="checkbox" name="habit" id="music" value="music" checked  /><label for="music">음악</label>
+									<input type="checkbox" name="habit" id="movie" value="movie" checked/><label for="movie">영화</label>
+									<input type="checkbox" name="habit" id="trip" value="trip" checked/><label for="trip">여행</label>
 								</dd>
 							</dl>						
 						</div>
-					</form>	
-					<div id="buttonLine">
+						<div id="buttonLine">
 						<input class="btn-okay button" type="submit" value="가입" />
 					</div>
+					</form>						
 				</div>
 				<div id="navi">
 					<h2>회원가입</h2>

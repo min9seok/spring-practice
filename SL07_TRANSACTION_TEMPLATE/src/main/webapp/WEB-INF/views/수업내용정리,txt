@@ -1,0 +1,53 @@
+p507 스프링의 트랜젝션 관리
+1. root-context.xml (DB 연동) 
+ transactionManager 추가
+
+2. 트랜젝션 처리
+ 게시글+(공지사항) 글쓰기
+ 작성자의 포인트 1증가
+ 
+3. member 테이블 > 포인트 칼럼 추가 
+ 제약조건 추가 > 제목이 같으면 오류 유일성 제약조건 부여, 포인트 3이상 오류 체크 제약조건 부여
+
+4. MemverVO 필드 추카
+ private int point;
+
+5. 계정추가
+
+6. 게시글 작성 + 작성자 포인트 1증가 메서드 추가
+ NoticeDao 인터페이스 > insertAndPointUpOfMember
+ NoticeDaoImpl 클래스 > insertAndPointUpOfMember
+ 
+7. CustomerController 수정
+
+8. 테스트 (트랜잭션 처리 전) 
+ TEST-1 작성 point = 1  
+ TEST-2 작성 point = 2 
+ TEST-3 작성 point = 3 체크 제약조건 point 오류
+ 
+9. 트랜잭션 처리 
+ root-context.xml 확인
+ <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+     <property name="dataSource"  ref="dataSource" />
+ </bean>
+ NoticeDaoImpl.java
+  @Autowired
+  private DataSourceTransactionManager transactionManager;
+
+10. 테스트 (트랜잭션 처리 후)
+ TEST-4 작성 point = 2
+ TEST-5 작성 point = 3 체크 제약조건 point 오류 rollback
+================================================================ 
+11. p513 TransactionTemplate 이용한 트랜잭션 처리
+ root-context.xml
+ <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+     <property name="transactionManager" ref="transactionManager"></property>
+ </bean>
+ NoticeDaoImpl 수정
+ 
+12. 테스트 
+ TEST-5 작성 point = 2
+ TEST-6 작성 point = 3 체크 제약조건 point 오류 rollback
+ ===============================================================
+ 
+ 
