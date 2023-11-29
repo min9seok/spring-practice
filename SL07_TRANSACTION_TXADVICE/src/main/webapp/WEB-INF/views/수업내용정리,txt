@@ -1,0 +1,17 @@
+p522 선언적 트랜잭션 관리
+1. servlet-context.xml
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	<tx:attributes>
+	<!-- <tx:method name="order" propagation="REQUIRED"/>
+	<tx:method name="get*" read-only="true"/> -->
+	<tx:method name="insertAndPointUpOfMember" propagation="REQUIRED" isolation="DEFAULT" read-only="false" timeout="-1" />
+	</tx:attributes>
+	</tx:advice>
+				
+	<aop:config>
+	<aop:pointcut expression="execution(public void insertAndPointUpOfMember(*,*) )"  id="insertOrM"/>
+	<aop:advisor advice-ref="txAdvice" pointcut-ref="insertOrM"/>
+	</aop:config>		
+ 
+2. NoticeDaoImpl 수정 
+ 트랜잭션 이용 쿼리 삭제
