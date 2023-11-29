@@ -1,0 +1,37 @@
+p511 트랜잭션 전파와 격리 레벨
+
+전파방식 : 트랜잭션 진행 중 또 다른 새로운 트랜잭션이 처리되어야 할 경우
+p512 표 12.1
+@T(P=R)
+aaa()
+{
+ x; insert
+ bbb(); 트랜잭션이 필요한 메서드
+ y; update
+}
+
+@T(P=R) bbb 오류 발생시 aaa 에 @T 가 없을경우 bbb만 rollback 후 aaa는 정상 처리
+@T(P=RN) bbb 오류 발생시 RN 이기 떄문에 bbb만 rollback 후 aaa는 정상 처리 // RN 이기 때문에 aaa 에 @T는 x 작업 후 멈춰 대기하고 bbb @T 처리 후 진행된다. 
+bbb(){
+ z : delete
+ z1 : insert
+}
+===========================================================================
+[실습]
+[ insertAndPointUpOfMember ]
+ 공지사항등록 + 작성자 포인트 1증가
+   INSERT         UPDATE
+위 메서드 수정 
+1. 
+@T
+insertAndPointUpOfMember
+{
+insert();
+insert();
+}
+@T
+insert()
+{
+ 공지사항등록 + 작성자 포인트 1증가
+   INSERT         UPDATE
+}
