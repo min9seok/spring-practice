@@ -33,18 +33,8 @@
 	  <beans:property name="maxInMemorySize" value="10240"/>
 	  <beans:property name="defaultEncoding" value="ISO-8859-1"/>
 	</beans:bean>
-<!-- 	p522 선언전 트랜잭션 처리 방법 tx:advice -->
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-	<tx:attributes>
-	<!-- <tx:method name="order" propagation="REQUIRED"/>
-	<tx:method name="get*" read-only="true"/> -->
-	<tx:method name="insertAndPointUpOfMember" propagation="REQUIRED" isolation="DEFAULT" read-only="false" timeout="-1" />
-	</tx:attributes>
-	</tx:advice>
-				
-	<aop:config>
-	<aop:pointcut expression="execution(public void insertAndPointUpOfMember(*,*) )"  id="insertOrM"/>
-	<aop:advisor advice-ref="txAdvice" pointcut-ref="insertOrM"/>
-	</aop:config>				
+<!-- 	p524 애노테이션 트랜잭션 처리 방법  -->
+ <tx:annotation-driven transaction-manager="transactionManager" mode="proxy" proxy-target-class="false"/>
+		
 	
 </beans:beans>

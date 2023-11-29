@@ -6,8 +6,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.doit.ky.domain.NoticeVO;
+import org.springframework.transaction.annotation.Transactional;
 
-
+// @Transactional //인터페이스 전체 해당
 public interface NoticeDao {
 	
 	// 공지사항 총 갯수
@@ -24,5 +25,6 @@ public interface NoticeDao {
 	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException;
 	
 	// 트랜젝션 처리
+//	@Transactional //선언 처리메서드 해당  
 	void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException;
 }

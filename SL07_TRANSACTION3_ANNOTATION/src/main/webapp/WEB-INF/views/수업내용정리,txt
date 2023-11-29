@@ -1,1 +1,7 @@
-p525 애노테이션 트랜잭션 관리
+p524 애노테이션 트랜잭션 관리
+1. servlet-context.xml
+<!-- 	p524 애노테이션 트랜잭션 처리 방법  -->
+ <tx:annotation-driven transaction-manager="transactionManager" mode="proxy" proxy-target-class="false"/>
+ 
+2. noticeDaoImpl 수정
+@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED )

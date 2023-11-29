@@ -17,6 +17,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -123,7 +126,9 @@ public class NoticeDaoImpl implements NoticeDao  {
 		return this.template.update(sql, parameterSource);
 				
 	}
-	@Override // 선언적 트랜잭션 처리 
+	
+	@Override // 애노테이션 트랜잭션 처리
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED )
 	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
 		// 1. 공지사항 작성
 		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
@@ -143,6 +148,26 @@ public class NoticeDaoImpl implements NoticeDao  {
 
 							
 	}
+//	@Override // 선언적 트랜잭션 처리 
+//	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+//		// 1. 공지사항 작성
+//		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+//				    + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+//		// 1
+//		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+//		 template.update(sql, parameterSource);
+//		// 2. 작성자 포인트 증가		
+//		String sql2 = " UPDATE member "
+//			        + " SET point = point + 1 "
+//			        + " WHERE id = :id ";
+//		// 2
+//		 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+//		 mapSqlParameterSource.addValue("id",id);
+//     	 int count = template.update(sql2, mapSqlParameterSource);
+//
+//
+//							
+//	}
 //	@Override // 트랜잭션 처리 + 탬플릿 사용
 //	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
 //		// 1. 공지사항 작성
