@@ -1,0 +1,14 @@
+1. p496 NamedParameterJdbcTemplate 객체 사용
+ root-context.xml
+ 
+2. org.doit.ky.persistence 
+ MemberDao.java 인터페이스
+  MemberDaoImpl.java 클래스 
+ NoticeDao.java 인터페이스
+  NoticeDaoImpl.java 클래스
+
+3. index.jsp를 .htm 컨트롤러 거치도록 
+ HomeController 수정 
+ 
+4. org.doit.ky.controller
+ JoinController 추가  
