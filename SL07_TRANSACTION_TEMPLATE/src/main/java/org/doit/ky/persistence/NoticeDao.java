@@ -1,0 +1,25 @@
+package org.doit.ky.persistence;
+
+
+import java.sql.SQLException;
+
+import java.util.List;
+
+import org.doit.ky.domain.NoticeVO;
+
+
+public interface NoticeDao {
+	
+	// 공지사항 총 갯수
+	public int getCount(String field, String query) throws ClassNotFoundException, SQLException;
+	// 목록
+	public List<NoticeVO> getNotices(int page, String field, String query) throws ClassNotFoundException, SQLException;
+	// 삭제
+	public int delete(String seq) throws ClassNotFoundException, SQLException;
+	// 수정	
+	public int update(NoticeVO notice) throws ClassNotFoundException, SQLException;
+	// 조회
+	public NoticeVO getNotice(String seq) throws ClassNotFoundException, SQLException;
+	// 추가	
+	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException;
+}
