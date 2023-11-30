@@ -1,0 +1,40 @@
+p511 트랜잭션 전파와 격리 레벨  표 12.2
+
+1. 격리 레벨 
+ 트랜잭션을 처리하는 과정 속에 두 개 이상의 트랜잭션이 동시에 같은 자원을 접근하게 되면 
+ 각각의 트랜잭션 처리를 어떻게 서로 영향받지 않게 처리할까
+ 
+ 동시에 트랜잭션이 실행되더라도 서로 영향을 받지 않게 격리 레벨(수준)을 설정
+
+2. 실습
+ - 멀티 스레드 /수업 X 
+ NoticeDao 
+ hitup()  - 공지사항 상세 보기 - 조회수 증가  추가
+ getHit() - 조회수 얻어오는 메서드 추가
+
+3. 용어
+ Dirty Read 상황 - Isolation.READ_COMMITTED 이 아닐경우 발생 
+  seq=10    조회수 : 5
+  hitUp(seq) @T
+  [ 조회수:6                                commit/[rollback] ]
+               6 getHit(seq) @T  
+ Non-repeatable Read 상황
+  조건) 반드시 2번 조회수를 읽어가는 중에
+  seq=10    조회수 : 5
+  [1] getHit(seq)              [2] getHit(seq)
+          5                            6
+                   hitUp(seq) 
+                      6
+ Phantom Read 상황 
+  조건) 여러 개의 레코드를 한 번에 읽어오는 상황 + 반복
+  A작업
+  SELECT *
+  FROM emp
+  WHERE dept = 30;
+  
+  [A작업]                        [A작업]
+   6명         
+              INSERT 30          7명   
+              UPDATE 30
+              DELETE 30          5명
+               
