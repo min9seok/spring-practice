@@ -1,0 +1,20 @@
+1. 스프링 tiles 설정 pom.xml
+
+2. servlet-context.xml 설정
+
+3. WEB-INF/tiles/tiles.xml
+
+4. 페이지 모듈화
+ webapp/inc/.jsp 추가
+ webapp/customer/inc/.jsp 추가
+ webapp/joinus/inc/.jsp 추가
+ 
+5. notice.jsp 모듈화
+
+6.join.jsp 모듈화
+
+7. controller 수정
+
+8. 모든 jsp 파일은 직접 호출할 수 없도록 WEB-INF/views/.jsp  
+
+9. tiles.xml
