@@ -93,16 +93,7 @@ public class NoticeDaoImpl implements NoticeDao  {
 				   + " WHERE SEQ = :seq ";
 		
 		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(notice);
-		 return this.template.update(sql, parameterSource);
-		/*
-	      MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-	      parameterSource.addValue("title", notice.getTitle());
-	      parameterSource.addValue("content", notice.getContent());
-	      parameterSource.addValue("filesrc",notice.getFilesrc());
-	      parameterSource.addValue("seq", notice.getSeq() );
-	      
-	      return this.npJdbcTemplate.update(sql, parameterSource);
-	      */
+		 return this.template.update(sql, parameterSource);		
 		 
 	}
 
@@ -117,19 +108,10 @@ public class NoticeDaoImpl implements NoticeDao  {
 		return this.template.queryForObject(sql, parameterSource, new BeanPropertyRowMapper<NoticeVO>(NoticeVO.class));
 									  
 	}
-
-	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException {
-		String sql = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
-				   + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
-		
-		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
-		return this.template.update(sql, parameterSource);
-				
-	}
 	
-	@Override // 애노테이션 트랜잭션 처리
-	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED )
-	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+	// 공지사항 등록 + 작성자 포인트 증가
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException { // 트랜잭션 전파 방식  
 		// 1. 공지사항 작성
 		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
 				    + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
@@ -142,12 +124,52 @@ public class NoticeDaoImpl implements NoticeDao  {
 			        + " WHERE id = :id ";
 		// 2
 		 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		 mapSqlParameterSource.addValue("id",id);
+		 mapSqlParameterSource.addValue("id","kmys");
      	 int count = template.update(sql2, mapSqlParameterSource);
-
-
-							
+     	 return count;				
 	}
+	
+//	@Override // 애노테이션 트랜잭션 처리 + 전파 방식 처리
+//	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED )
+//	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+//		
+//		insert(vo);
+//		vo.setTitle(vo.getTitle()+"-2");
+//		insert(vo);
+//							
+//	}
+	
+//	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException { // 기존 자료 
+//		String sql = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+//				   + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+//		
+//		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+//		return this.template.update(sql, parameterSource);
+//				
+//	}
+	
+//	@Override // 애노테이션 트랜잭션 처리
+//	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED )
+//	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+//		// 1. 공지사항 작성
+//		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+//				    + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+//		// 1
+//		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+//		 template.update(sql, parameterSource);
+//		// 2. 작성자 포인트 증가		
+//		String sql2 = " UPDATE member "
+//			        + " SET point = point + 1 "
+//			        + " WHERE id = :id ";
+//		// 2
+//		 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+//		 mapSqlParameterSource.addValue("id",id);
+//     	 int count = template.update(sql2, mapSqlParameterSource);
+//
+//
+//							
+//	}
+	
 //	@Override // 선언적 트랜잭션 처리 
 //	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
 //		// 1. 공지사항 작성
@@ -168,6 +190,7 @@ public class NoticeDaoImpl implements NoticeDao  {
 //
 //							
 //	}
+	
 //	@Override // 트랜잭션 처리 + 탬플릿 사용
 //	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
 //		// 1. 공지사항 작성
@@ -192,7 +215,6 @@ public class NoticeDaoImpl implements NoticeDao  {
 //			}
 //		});							
 //	}
-	
 	
 //	@Override // 트랜잭션 처리
 //	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
@@ -221,6 +243,7 @@ public class NoticeDaoImpl implements NoticeDao  {
 //			
 //		}
 //	}
+	
 //	@Override // 트랜잭션 미처리 
 //	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
 //		// 1. 공지사항 작성

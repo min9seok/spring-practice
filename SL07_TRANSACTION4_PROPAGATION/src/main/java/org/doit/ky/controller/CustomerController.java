@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.doit.ky.domain.NoticeVO;
 import org.doit.ky.persistence.NoticeDao;
-
+import org.doit.ky.service.MemberShipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +35,9 @@ public class CustomerController {
 	@Autowired
 	private NoticeDao dao;
 
+	@Autowired
+	private MemberShipService service;
+	
 	// ?dir=customer/upload&file=${ notice.filesrc  }
     @RequestMapping( "download.htm")
     public void download(
@@ -144,7 +147,8 @@ public class CustomerController {
 		vo.setWriter("kmys");
 
 //		int count = this.dao.insert(vo);
-		this.dao.insertAndPointUpOfMember(vo, "kmys");
+//		this.dao.insertAndPointUpOfMember(vo, "kmys");
+		this.service.insertAndPointUpOfMember(vo, "kmys");
 		int count = 1;
 		if(count == 1) {
 			return "redirect:notice.htm";	

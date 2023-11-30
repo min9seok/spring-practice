@@ -35,3 +35,54 @@ insert()
  공지사항등록 + 작성자 포인트 1증가
    INSERT         UPDATE
 }
+============================================================================
+ NoticeDaoImpl 
+ 1) 
+ // 공지사항 등록 + 작성자 포인트 증가
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException { // 트랜잭션 전파 방식  
+		// 1. 공지사항 작성
+		String sql  = " INSERT INTO NOTICES(SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC) "
+				    + " VALUES( (SELECT NVL(MAX(TO_NUMBER(SEQ))+1,1) FROM NOTICES), :title, :content, :writer, SYSDATE, 0, :filesrc)";
+		// 1
+		 SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(vo);
+		 template.update(sql, parameterSource);
+		// 2. 작성자 포인트 증가		
+		String sql2 = " UPDATE member "
+			        + " SET point = point + 1 "
+			        + " WHERE id = :id ";
+		// 2
+		 MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		 mapSqlParameterSource.addValue("id","kmys");
+     	 int count = template.update(sql2, mapSqlParameterSource);
+     	 return count;				
+	}
+	
+	@Override // 애노테이션 트랜잭션 처리 + 전파 방식 처리
+	//@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED )
+	public void insertAndPointUpOfMember(NoticeVO vo, String id) throws ClassNotFoundException, SQLException {
+		
+		insert(vo);
+		
+		insert(vo);
+							
+	}
+	
+2)
+//@T 트랜잭션 예외처리가 제대로 이루어 지지 않음 포인트는 2인데 글은 두개 생성 : 이유 밑에 설명 
+@T 트랜잭션 정상 처리 포인트 1 유지 글 하나도 작성 X
+insertAndPointUpOfMember
+insert();
+insert();
+
+@T
+insert(){}
+
+이유는 같은 클래스 내에서 다른 메소드를 호출하는 구조로는 AOP 방식으로 트랜잭션 처리가 되지 않는다는 것입니다. 
+따라서, 이 문제를 해결하려면 별도의 서비스 클래스를 만들어서 그 곳에서 게시글 등록과 포인트 증가 메소드를 호출하도록 해야 합니다.
+
+3) service 
+ MemberShipService 인터페이스
+ MemberShipServiceImpl 클래스
+ 
+4) CustomerController 
