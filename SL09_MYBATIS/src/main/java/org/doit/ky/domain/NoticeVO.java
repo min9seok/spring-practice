@@ -21,6 +21,8 @@ public class NoticeVO {
 	private int hit;
 	private String filesrc;
 	
+	private int srow;
+	private int erow;
 	
 	private CommonsMultipartFile file;
 	
