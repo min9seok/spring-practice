@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.doit.ky.mapper.MemberMapper">
+<!-- 	int idCheck(String empno) throws Exception; -->
+     <select id="idCheck" resultType="Integer">
+       SELECT COUNT(*)
+       FROM emp
+       WHERE empno = #{empno}
+     </select>
+
+<!-- ResponseEntity<String> insertDept(DeptDTO dto) throws Exception; -->
+	<insert id="insertDept">
+	  INSERT INTO dept (deptno, dname, loc)
+	  VALUES ( #{deptno}, #{dname}, #{loc} )
+	</insert>
+	
+<!-- 	int deleteDept(int deptno) throws Exception; -->
+	<delete id="deleteDept">
+	  DELETE FROM dept
+	  WHERE deptno = #{deptno}
+	</delete>
+	
+	<select id="selectDept" resultType="org.doit.ky.domain.DeptDTO">
+	  SELECT *
+	  FROM dept
+	</select>
+	<select id="selectEmp" resultType="org.doit.ky.domain.EmpDTO">
+	  SELECT *
+	  FROM emp
+	  WHERE deptno = #{deptno}
+	</select>
+	
+</mapper>

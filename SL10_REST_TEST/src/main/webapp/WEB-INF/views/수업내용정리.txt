@@ -1,0 +1,9 @@
+p428
+ empno : [7369] ID 중복 체크
+ ename : [    ]
+ 
+1. Homecontroller 확인
+2. Home.jsp 코딩 수정
+3. domain>EmpVo
+4. MemberMapper 인터페이스
+5. MemberMapper.xml 
