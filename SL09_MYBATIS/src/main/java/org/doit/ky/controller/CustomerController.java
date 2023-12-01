@@ -141,10 +141,10 @@ public class CustomerController {
 		
 		vo.setWriter("kmys");
 
-//		int count = this.dao.insert(vo);
+		int count = this.dao.insert(vo);
 //		this.dao.insertAndPointUpOfMember(vo, "kmys");
-		this.service.insertAndPointUpOfMember(vo, "kmys");
-		int count = 1;
+//		this.service.insertAndPointUpOfMember(vo, "kmys");
+//		int count = 1;
 		if(count == 1) {
 			return "redirect:notice.htm";	
 		}else {
