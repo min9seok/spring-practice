@@ -1,0 +1,18 @@
+1. SL00 프로젝트 복사 후 
+   [ SL10_REST_TEST 프로젝트 생성 ]
+   p 428 
+   
+   
+   empno  :  [ 7369 ]  [ID 중복 체크]
+   ename  :  [     ]
+   
+   
+ 2. HomeController.java 확인
+ 3. home.jsp 코딩 수정~    
+ 
+ 4. domain 패키지
+      ㄴ EmpVO.java
+      
+ 5. MemberMapper.java 인터페이스      
+ 6. MemberMapper.xml  매퍼XML파일 
+   
