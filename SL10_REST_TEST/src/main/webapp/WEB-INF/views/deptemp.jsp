@@ -61,7 +61,9 @@
 <script type="text/javascript">
  $(function(){
 	$("#dept").change(function(){
-		var deptno = $("#dept").val()		
+		var deptno = $("#dept").val()	
+		alert(typeof deptno);
+		return false;
 	$.ajax({
 		url: "/selectemp"  // HomeAjaxController.java
 	  , method: "GET"
