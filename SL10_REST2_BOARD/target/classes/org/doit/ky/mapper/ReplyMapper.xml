@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.doit.ky.mapper.ReplyMapper">
+<!-- 	int insert(ReplyVO vo); -->
+	<insert id="insert">
+	  INSERT INTO tbl_reply(rno,bno,reply,replyer)
+	  VALUES(seq_reply.nextval,#{bno},#{reply},#{replyer})
+	</insert>
+<!-- 	ReplyVO read(Long rno); -->
+	<select id="read" resultType="org.doit.ky.mapper.ReplyVO">
+	  SELECT *
+	  FROM tbl_reply
+	  WHERE rno = #{rno}
+	</select>
+<!-- 	int delete(Long rno); -->
+	<delete id="delete">
+	  DELETE FROM tbl_reply
+	  WHERE rno = #{rno}
+	</delete>
+<!-- 	int update(ReplyVO reply); -->
+	<update id="update">
+	  UPDATE tbl_reply
+	  SET reply = #{reply}, updatedate = sysdate
+	  WHERE rno = #{rno}
+	</update>
+<!-- 	List<ReplyVO> getListWithPaging(@Param("cri") Criteria cri, @Param("bno")Long bno); -->
+	<select id="getListWithPaging" resultType="org.doit.ky.domain.ReplyVO">   
+     <![CDATA[
+       SELECT  rno, bno, reply, replyer, replydate, updatedate
+       FROM   (
+                SELECT /*+INDEX(tbl_reply idx_reply) */ 
+                  rownum rn,  rno, bno, reply, replyer, replyDate, updatedate
+                FROM tbl_reply
+                WHERE bno = #{bno} AND rno > 0 AND rownum <= #{cri.pageNum} * #{cri.amount}
+         ) 
+        WHERE rn > (#{cri.pageNum} -1) * #{cri.amount} 
+        ORDER BY rno ASC
+      ]]>   
+   </select>
+<!-- 	int getCountByBno(Long bno); -->
+	<select id="getCountByBno" resultType="Integer">
+	<![CDATA[
+	  SELECT count(rno)
+	  FROM tbl_reply
+	  WHERE bno = #{bno}
+	  ]]>
+	</select>
+</mapper>

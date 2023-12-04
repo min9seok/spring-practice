@@ -1,0 +1,97 @@
+REST 방식과 Ajax를 이용하는 댓글처리
+1. 하나의 게시글
+   댓글
+   댓글
+   댓글
+   댓글
+2. REST(Representational State Transfer)
+ RESTful - REST 원리를 따르는 시스템
+ 
+3. 모바일 시대 변화
+ [웹]              앱, 웹+엡
+
+4. URL<URI   REST
+ - 하나의 URI는 하나의 고유한 자원(Resource) 를 대표하도록 설계된다는 개념의 전송 방법
+
+5. 스프링 REST 방식으로 데이터를 처리하는 어노테이션 제공
+ @RestController : REST방식으로 처리하는 Controller
+ @RequestBody  : JSON 데이터 > 클래스 객체 변환(바인딩)
+ @ResponseBody : JSP와 같은 뷰로 전달 X, 데이터 자체를 전달
+ @PathVarlable : URL 속에 파라미터값을 추출해서 사용
+ @CrossOrigin  : Ajax의 크로스 도메인 문제를 해결해 주는 어노테이션
+
+6. 전송방식
+ POST   : CREATE(Insert)  + /members/new  회원등록
+ GET    : READ(Select)    + /members/{id} 회원조회
+ PUT    : UPDATE(Update)  + /members/{id} + body{json데이터} 회원수정
+ DELETE : DELETE(Delete)  + /members/{id} 회원삭제
+ 등등
+ 
+7. pom.xml 
+ jackson-databind : JSON 데이터를 처리
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.5</version>
+		</dependency>
+
+ jackson-dataformat-xml : XML 데이터를 처리
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.9.5</version>
+		</dependency>
+ 
+ gson : Java 객체를 JSON 문자열로 변환 		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.2</version>
+		</dependency>		
+		
+8. 예제 SampleController
+================================================================================
+9. Ajax 이용해서 댓글 처리
+CREATE TABLE tbl_reply
+(
+  rno NUMBER(10)
+ ,bno NUMBER(10) NOT NULL
+ ,reply VARCHAR2(1000) NOT NULL
+ ,replyer VARCHAR2(50) NOT NULL
+ ,replyDate DATE DEFAULT SYSDATE
+ ,updateDate DATE DEFAULT SYSDATE
+);
+
+CREATE SEQUENCE seq_reply;
+
+ALTER TABLE tbl_reply
+ADD CONSTRAINT pk_reply_rno PRIMARY KEY(rno);
+
+ALTER TABLE tbl_reply
+ADD CONSTRAINT fk_reply_bno FOREIGN KEY(bno) REFERENCES tbl_board(bno);
+
+10. domain>ReplyVO
+
+11. ReplyMapper.java,.xml 추가
+
+12. 서비스 + Controller 
+ org.doit.ky.service>ReplyService, Impl 
+ 
+13. web.xml 
+ 시큐리티 필터 주석
+ 
+14. ReplyController.java + Ajax(REST)
+ 작업 :          URL         : HTTP 전송방식
+ 등록     /replies/new         POST
+ 조회     /replies/:rno        GET
+ 삭제     /replies/:rno        DELETE
+ 수정     /replies/:rno        PUT or PATCH
+ 
+ 페이징 처리
+ 페이지  /replies/pages/:bno/:page   GET      
+
+15. get.jsp 댓글기능구현
+ reply.js 파일 추가
+ 
+16. get.jsp
+		
