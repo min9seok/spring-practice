@@ -1,0 +1,130 @@
+1. SECRURITY(보안) = 인증(Authentication) + 권한(인가)(Authorization)
+                    익명(guest) 로그인       관리자,회원 
+2. 인증, 권한 처리 =   쿠키, [세션]
+  스프링 Interceptor  vs  필터 차이점
+  
+  스프링 컨테이너
+  [스프링빈객체..  스프링인터셉터]  필터객체
+  
+3. 체크 제약조건 확인 후 삭제 ( POINT , TITLE)
+4. 글쓰기 작업 정상 확인
+
+5. [스프링 시큐리티]
+ pom.xml - Spring Web Security 의존 모듈 설정 확인 / 공식 문서에는 spring-security-web 만 있어도 가능        
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+ 시큐리티 관련 설정 
+  web.xml
+   <context-param>
+		 <param-name>contextConfigLocation</param-name>
+		 <param-value>
+			 /WEB-INF/spring/root-context.xml
+			 /WEB-INF/spring/security-context.xml
+		 </param-value>
+   </context-param>
+   <filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>  
+  security-context.xml - spring-security-4.2.xsd  5점대 버젼은 버그발생    		               
+=========================================================================================
+6. 시큐리티가 필요한 URL 설계
+ 게시판 글쓰기 - 인증(로그인) O
+ 게시판 작성자는 인증받은 ID로 사용  
+ 게시판 수정/삭제 - 작성자 확인, 관리자권한 확인 
+ 그 외의 요청URL 인증받지 않아도 모든 사용자가 사용 가능
+
+7. 시큐리티 내부 구조(개요)
+ AuthenticationManager(인증관리자) - 가장 중요한 역할, 다양한 방식의 인증을 처리할 수 있도록 구조 설계 (인터페이스)
+ ProviderManager(제공관리자) - 인증처리를 AuthenticationProvoider 객체를 이용해서 처리를 위임하는 역할 (인터페이스)
+ AuthenticationProvoider(인증제공자) - 실제 인증 작업을 진행(처리)하는 역할 (인터페이스)
+ UserDetailsService(사용자상세서비스) - 인증된 실제 사용자의 정보와 관한 정보와 권한 정보를 처리해서 반환하는 객체 (인터페이스)
+ 
+ (AuthenticationProvoider,UserDetailsService) 직접 구현할 경우가 있다. 대부분 UserDetailsService 구현
+ 새로운 프로토콜이나 인증 구현 방식을 직접 구현하는 경우에는 AuthenticationProvoider 구현 
+ 
+8. 접근 제한 설정 코딩
+ 접근 제한 설정 태그 - security-context.xml  
+  <security:http use-expressions="true">
+ 	   <security:intercept-url pettern="url패턴" access="권한 체크(권한명,표현식)"/>
+       <security:form-login/>  
+  </security:http>
+ 
+ use-expressions="true" 일때만 표현식 사용 가능  
+ 표현식
+  hasRole(),hasAuthority() - 해당 권한이 있으면 true
+  hasAnyRole(), hasAnyAuthority() - 여러 권한 중에 하나라도 해당 권한이 있으면 true
+  principal - 현재 사용자 정보 
+  permitAll - 모든 사용자 허용
+  denyAll - 모든 사용자 거부
+  isAnonymous() - 익명의 사용자(비회원도 해당)
+  isAuthenticated() - 인증된 사용자 true
+  isFullAuthentiecated() - (자동로그인)Remember-me로 인증된 것이 아닌 인증된 사용자 true 
+  
+  <security:intercept-url pattern="/customer/noticeReg.htm" access="isAuthenticated"/>
+  <security:intercept-url pattern="/customer/noticeDel.htm" access="hasAuthority('ROLE_ADMIN')"/>
+  <security:intercept-url pattern="/**" access="permitAll"/>
+  
+ 실제 회원 테이블 연동 로그인 X
+ 인 메모리 인증 방식으로 로그인 (계정 + 권한 설정)
+ 
+9. localhost/login 요청 URL
+  스프링 5 부터 시큐리티 와 관련된 인증 처리는 PasswordEncoder 객체를 등록해야한다.
+  
+10. user 계정로그인 후 삭제 버튼 클릭시 403 에러 발생
+ 접근 금지 에러 발생시 
+   특정 URL로 이동 
+   AccessDeniedHandler 직접 구현해서 접근 제한 처리 (권장) : 다양한 처리를 하기 위해
+   <security:access-denied-handler error-page="/common/accessError.htm"/>
+ CommonController 추가   
+  /common/accessError.htm 메서드 생성
+ ky.security 패키지
+  CustomAccessDeniedHandler  
+
+11. 스프링에서 제공하는 로그인 페이지 사용.
+ 커스텀 로그인 페이지 사용
+ login-page="/joinus/login.htm" 반드시 GET 요청
+
+12. 로그인 성공한 이후에 특정 작업을 하도록 제어하고 싶은 경우
+ ex) 로그인 성공 후 특정 페이지로 이동, 별도의 쿠키 등을 생성해서 처리  
+ AuthenticationSuccessHandler 인터페이스 
+ 
+13. 로그인 실패
+ http://localhost/joinus/login.htm?error=true
+ login.jsp  
+ 
+14. header.jsp 수정 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+			<sec:authorize access="isAnonymous()">
+			  <a href="${pageContext.request.contextPath }/joinus/login.htm">로그인</a>
+			</sec:authorize>
+			<sec:authorize access="isAuthenticated()">
+			  <form action="${  pageContext.request.contextPath   }/joinus/logout.htm" method="post">                     
+                [<sec:authentication property="principal.username"/>] 님
+                 <input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
+                 <button>로그아웃</button>
+              </form> 
+			</sec:authorize>
+			
+15. 로그 아웃 처리 
+<security:logout logout-url="/joinus/logout.htm" invalidate-session="true" logout-success-url="/"/>
+

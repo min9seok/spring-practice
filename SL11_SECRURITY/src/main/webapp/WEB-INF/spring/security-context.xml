@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+	<!-- 에러 : spring-security-4.2.xsd 수정. -->   
+          
+<!--   보안필더 체인을 적용하지 않도록 하는 설정           -->
+   <security:http pattern="/static/**" security="none"></security:http>   
+   <security:http pattern="/design/**" security="none"></security:http>   
+   
+   <security:http> 
+<!--     접근 권한 설정  -->
+<!-- 	  <security:intercept-url pattern="/user/login" access="permitAll"/> -->
+<!-- 	  <security:intercept-url pattern="/admin/manage/**" access="hasAuthority('ROLE_MANAGER')"/> -->
+<!-- 	  <security:intercept-url pattern="/member/**" access="isAuthenticated()"/> -->
+<!-- 	  <security:intercept-url pattern="/**" access="permitAll"/> -->
+
+		  <security:intercept-url pattern="/customer/noticeReg.htm" access="isAuthenticated()"/>
+		  <security:intercept-url pattern="/customer/noticeDel.htm" access="hasAuthority('ROLE_ADMIN')"/>
+		  <security:intercept-url pattern="/**" access="permitAll"/>
+		  
+<!-- 		  접근 금지 발생시 특정 URL 이동 -->
+<!-- 	      <security:access-denied-handler error-page="/common/accessError.htm"/> -->
+<!-- 		  접근 금지 발생시 직접 구현  -->
+			  <security:access-denied-handler ref="customAccessDeniedHandler" />
+<!--       <security:form-login/>   -->
+	 <security:form-login 
+	 	login-page="/joinus/login.htm"
+		authentication-success-handler-ref="customLoginSuccessHandler"
+		authentication-failure-url="/joinus/login.htm?error=true"
+		default-target-url="/index.htm"	 	
+	 />
+	 <security:logout logout-url="/joinus/logout.htm" invalidate-session="true" logout-success-url="/"/>
+   </security:http>   
+   
+   <security:authentication-manager>
+     <security:authentication-provider>     
+       <security:user-service>
+         <security:user name="bob" authorities="ROLE_USER" password="{noop}1004" />         
+         <security:user name="admin" authorities="ROLE_USER, ROLE_MANAGER, ROLE_ADMIN" password="{noop}1004"/>
+       </security:user-service>
+     </security:authentication-provider> 
+   </security:authentication-manager>
+<!--    csrf 토큰 사용 하지 않는다 ***보안에 취약하다***-->
+<!--    <security:csrf disabled="true"/> -->
+</beans>
