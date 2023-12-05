@@ -10,7 +10,7 @@
 	  VALUES(seq_reply.nextval,#{bno},#{reply},#{replyer})
 	</insert>
 <!-- 	ReplyVO read(Long rno); -->
-	<select id="read" resultType="org.doit.ky.mapper.ReplyVO">
+	<select id="read" resultType="org.doit.ky.domain.ReplyVO">
 	  SELECT *
 	  FROM tbl_reply
 	  WHERE rno = #{rno}
