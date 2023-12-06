@@ -37,12 +37,12 @@
    </security:http>   
     <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
    <security:authentication-manager>
-     <security:authentication-provider>     
-       <security:jdbc-user-service 
-       data-source-ref="dataSource"
-       users-by-username-query="SELECT id AS USERNAME, pwd AS PASSWORD, enabled FROM member WHERE id = ?"
-       authorities-by-username-query="SELECT username AS userid, authority AS auth FROM member_authorities WHERE username = ?  " 
-       />
+     <security:authentication-provider user-service-ref="customUserDetailsService">     
+<!--        <security:jdbc-user-service  -->
+<!--        data-source-ref="dataSource" -->
+<!--        users-by-username-query="SELECT id AS USERNAME, pwd AS PASSWORD, enabled FROM member WHERE id = ?" -->
+<!--        authorities-by-username-query="SELECT username AS userid, authority AS auth FROM member_authorities WHERE username = ?  "  -->
+<!--        /> -->
        <security:password-encoder ref="bCryptPasswordEncoder" />
      </security:authentication-provider> 
    </security:authentication-manager>

@@ -1,6 +1,7 @@
 package org.doit.ky.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,5 +24,9 @@ public class MemberVO {
 	private Date   regdate;
 	
 	private int point;
+	
+	//권한 정보
+	private boolean enabled;
+	private List<AuthVO> authlist;
 	
 }

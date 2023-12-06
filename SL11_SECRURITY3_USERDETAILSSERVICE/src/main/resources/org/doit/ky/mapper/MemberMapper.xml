@@ -16,4 +16,23 @@
 		INSERT INTO MEMBER(id, PWD, NAME, GENDER, BIRTH, IS_LUNAR, CPHONE, EMAIL, HABIT, REGDATE) 
 		VALUES( #{id}, #{pwd}, #{name}, #{gender}, #{birth}, #{is_lunar}, #{cphone}, #{email}, #{habit}, SYSDATE)
 	</insert>
+	
+<!-- 	public MemberVO read(@Param("userid") String userid); -->
+	<resultMap type="org.doit.ky.domain.MemberVO" id="memberMap">
+	  <id property="id" column="id"/>
+	  <result property="id" column="id"/>
+	  <result property="pwd" column="pwd"/>
+	  <result property="name" column="name"/>
+	  <result property="regdate" column="regdate"/>
+	  <collection property="authlist" resultMap="authMap"></collection>
+	</resultMap>
+	<resultMap type="org.doit.ky.domain.AuthVO" id="authMap">
+	  <result property="username" column="username"/>
+	  <result property="authority" column="authority"/>
+	</resultMap>
+	<select id="read" resultMap="memberMap">
+		SELECT id, pwd, name, enabled, regdate, authority
+		FROM member a LEFT JOIN member_authorities b ON a.id = b.username
+		WHERE a.id = #{userid}	
+	</select>
 </mapper>

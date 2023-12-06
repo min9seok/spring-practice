@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div id="content">
 	<h2>공지사항</h2>
 	<h3 class="hidden">방문페이지위치</h3>
@@ -36,18 +37,23 @@
 		<div class="article-content">${vo.content }</div>
 	</div>
 	<p class="article-comment margin-small">
-		<a class="btn-list button" href="notice.htm">목록</a> <a
-			class="btn-edit button" href="noticeEdit.htm?seq=${vo.seq }">수정</a>
-		<%-- 						<a class="btn-del button" href="noticeDel.htm?seq=${vo.seq }">삭제</a> --%>
-		<a class="btn-del button"
-			href="noticeDel.htm?seq=${vo.seq }&filesrc=${vo.filesrc}">삭제</a>
-<!-- 		<script type="text/javascript"> -->
-<!-- // 					  $(".btn-del").click(function(event){ -->
-<!-- // 						 if(!confirm("삭제?")){ -->
-<!-- // 							 event.preventDefault(); -->
-<!-- // 						 }  -->
-<!-- // 					  }); -->
-<!-- 					</script> -->
+		<a class="btn-list button" href="notice.htm">목록</a>
+		<sec:authorize access="isAuthenticated()">
+<!-- 		로그인 사용자 == 작성자   -->
+		<sec:authentication property="principal" var="puser"/>
+		<c:if test="${vo.writer eq puser.memberVO.id }">
+		<a class="btn-edit button" href="noticeEdit.htm?seq=${vo.seq }">수정</a>
+		</c:if>
+		</sec:authorize>
+		<%-- <a class="btn-del button" href="noticeDel.htm?seq=${vo.seq }">삭제</a> --%>
+		<a class="btn-del button" href="noticeDel.htm?seq=${vo.seq }&filesrc=${vo.filesrc}">삭제</a>
+		<script type="text/javascript">
+					  $(".btn-del").click(function(event){
+						 if(!confirm("삭제?")){
+							 event.preventDefault();
+						 } 
+					  });
+					</script>
 	</p>
 	<div class="margin-small" style="border-top: 1px solid #dfdfdf;">
 		<dl class="article-detail-row">

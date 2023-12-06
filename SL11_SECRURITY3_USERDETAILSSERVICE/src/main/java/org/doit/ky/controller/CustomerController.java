@@ -3,6 +3,7 @@ package org.doit.ky.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -125,7 +126,7 @@ public class CustomerController {
 	      } // while 
 	   }
 	@PostMapping("noticeReg.htm")
-	public String noticeReg(NoticeVO vo, HttpServletRequest request) throws ClassNotFoundException, SQLException, IllegalStateException, IOException {
+	public String noticeReg(NoticeVO vo, HttpServletRequest request, Principal principal) throws ClassNotFoundException, SQLException, IllegalStateException, IOException {
 		CommonsMultipartFile multipartFile  =  vo.getFile();
 		String uploadRealPath = null;
 //		if (!multipartFile.isEmpty()) {
@@ -141,11 +142,11 @@ public class CustomerController {
 			vo.setFilesrc(filesystemName);
 		}
 		
-		vo.setWriter("kmys");
-
+//		vo.setWriter("kmys");
+		vo.setWriter(principal.getName());
 		int count = this.dao.insert(vo);
 //		this.dao.insertAndPointUpOfMember(vo, "kmys");
-//		this.service.insertAndPointUpOfMember(vo, "kmys");
+//		this.service.insertAndPointUpOfMember(vo, principal.getName());
 //		int count = 1;
 		if(count == 1) {
 			return "redirect:notice.htm";	

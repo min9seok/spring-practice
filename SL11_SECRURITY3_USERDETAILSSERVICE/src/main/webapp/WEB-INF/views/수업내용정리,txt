@@ -1,71 +1,50 @@
-1. tbl_board 게시판
-   member    회원
+1. AM(인증관리자)
+       ↑
+   PM(제공관리자) ↔ AP(인증제공자) ↔ UDS()
+                  인증처리객체    인증정보객체
+                                직접구현
+                              
+2. 직접 UserDatilsService 구현하는 방법
 
-2. 스프링 시큐리티와 인증/권한 처리
- [ 인 메모리 인증 방식 ] X 
-	   <security:user-service>
-         <security:user name="bob" authorities="ROLE_USER" password="{noop}1004" />         
-         <security:user name="admin" authorities="ROLE_USER, ROLE_MANAGER, ROLE_ADMIN" password="{noop}1004"/>
-       </security:user-service>
- [ JDBC 연동 인증 방식 ] O
-
-3. 스프링 시큐리티의 회원 테이블
- create table users{
-   username varchar2(50) NOT null primary key
-  ,password varchar2(50) not null
-  ,enabled char(1) default '1'          
- }
- create table authorities{
-   username varchar2(50) NOT null
-  ,authority varchar2(50) not null
-  ,constraint fk_test foreign key(username) references users(username)
- }
-
-4. security-context.xml
- <security:jdbc-user-service data-source-ref="dataSource"/>
- 
-5. 기존의 테이블 member 사용 + member_authorities 테이블 생성
- member
-  id as username
-  pwd as password
-  enabled 추가
-   authorities (권한) 테이블 생성
-  CREATE TABLE member_authorities(
-   username     varchar2(50) not null      
-  , authority    varchar2(50) not null 
-  , constraint fk_member_authorities_username 
-               FOREIGN KEY(username) 
-               REFERENCES member(id)
-);
-
-6. PasswordEncoder 임시 사용 X {noop}
- 스프링 제공하는 passwordEncoder 빈 등록 설정
- <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
-   <security:authentication-manager>
-     <security:authentication-provider>     
-       <security:jdbc-user-service 
-       data-source-ref="dataSource"
-       users-by-username-query="SELECT id AS USERNAME, pwd AS PASSWORD, enabled FROM member WHERE id = ?"
-       authorities-by-username-query="SELECT username AS userid, authority AS auth FROM member_authorities WHERE username = ?  " 
-       />
-       <security:password-encoder ref="bCryptPasswordEncoder" />
-     </security:authentication-provider> 
-   </security:authentication-manager>
-
- JoinController 수정
- join.jsp <input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }" /> 확인
- @Autowired
-	private PasswordEncoder passwordEncoder;
-	
-	@PostMapping("/join.htm")
-	public String join(MemberVO vo) throws Exception{
-		
-		String pwd = vo.getPwd();
-		vo.setPwd(this.passwordEncoder.encode(pwd));
-		
-		this.dao.insert(vo);
-		return "redirect:../index.htm";
-	}
- 회원가입 페이지 계정 3개 추가
- 
- 
+3. 어떤 인증받은 추가적인 정보를 저장.
+    MemberVO.java + 추가적인 정보 필드
+    AuthVO.java     권한 정보
+4. 인증받은 정보를 저장 - DB 관련 코딩 추가,수정
+    MemberMapper.java                                  
+    MemberMapper.xml
+admin	$2a$10$suLQaiZfgKRhOw5vMPDjgOIyGN2bESIiq1Yce5.mTeMTEHSly7XCq	쌍용교육센터강사	1	23/12/05	ROLE_MANAGER
+admin	$2a$10$suLQaiZfgKRhOw5vMPDjgOIyGN2bESIiq1Yce5.mTeMTEHSly7XCq	쌍용교육센터강사	1	23/12/05	ROLE_ADMIN
+admin	$2a$10$suLQaiZfgKRhOw5vMPDjgOIyGN2bESIiq1Yce5.mTeMTEHSly7XCq	쌍용교육센터강사	1	23/12/05	ROLE_USER    
+    
+5. security.[Custom]UserDetailsService 직접 구현
+   @Override
+   UserDetails loadUserByUsername(String username)    
+   		 username == member 테이블의id
+   		 로그인한 회원 정보 select
+   		 MemberVO 객체 생성 > UserDetails 변환
+   		 security.domain.CustomerUser
+   		 
+   UserDetails 클래스 타입 반환
+   
+6. security-context.xml
+    [Custom]UserDatilsService 설정
+    
+7. 실습
+ noticeReg.jsp 글쓰기
+ 로그인 정보 출력 코딩 추가
+ 글 쓰기 작성자 - 로그인 사용자 설정
+  CustomerController.java
+ 글 수정,삭제 - 글 작성자 OR 관리 설정
+ =================================================================
+ 웹 소켓 p447
+ 1. html5 - API : 웹소켓(WebSocket)
+ 2. 웹소켓
+  - http 프로토콜
+  - 웹브라우저      <->      웹 서버
+               양방향통신   
+  - 실시간 알림, 채팅, 웹 기반 실시간 협업             
+3. 자바의 웹 소켓 표준(JSR-356)에 맞춰 웹소켓 서버 기능을 구현할 경우 FC, 스프링 빈 객체 사용 X > 클래스 제공
+   컨트롤러를 구현한 것과 비슷한 방식으로 서버를 구현할 수 있다.
+  - WebSocketHandler 클래스
+  - SockJS 연동 : 웹 소켓을 사용할 수 없는 경우
+4. 설정.  ~p457             

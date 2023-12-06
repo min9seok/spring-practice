@@ -30,7 +30,7 @@
    
    <!-- p91 -->
    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
-     <property name="dataSource" ref="dataSource"></property>
+     <property name="dataSource" ref="dataSource"></property>    
    </bean>
       
    <!-- p95 -->
@@ -42,7 +42,7 @@
    </bean> -->
    
    <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-     <constructor-arg ref="dataSource"></constructor-arg>   
+     <constructor-arg ref="dataSource"></constructor-arg>         
    </bean>
    
    <!-- p508 스프링 트랜잭션을 처리할 JDBC기반의 트랜잭션 관리자 등록
