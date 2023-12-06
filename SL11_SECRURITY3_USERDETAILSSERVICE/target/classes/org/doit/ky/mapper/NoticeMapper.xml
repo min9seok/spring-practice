@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.doit.ky.mapper.NoticeMapper">
+<!-- 	// 공지사항 총 갯수 -->
+<!-- 	public int getCount(String field, String query) throws ClassNotFoundException, SQLException; -->
+	<select id="getCount" resultType="Integer">
+		SELECT COUNT(*) CNT 
+		FROM NOTICES 
+		WHERE ${param1} LIKE '%${param2}%'
+	</select>
+<!-- 	// 목록 -->
+<!-- 	public List <NoticeVO> getNotices(int page, String field, String query) throws ClassNotFoundException, SQLException; -->
+<select id="getNotices" resultType="org.doit.ky.domain.NoticeVO">
+	SELECT *
+	FROM 
+	(SELECT ROWNUM NUM, N.*
+	FROM 
+	(SELECT *
+	FROM NOTICES
+	WHERE ${param2} LIKE '%${param3}%'
+	ORDER BY REGDATE DESC
+	) N
+	)
+	WHERE NUM BETWEEN (1 + ( #{param1} -1)*15) AND (15 + (#{param1}-1)*15)
+</select>
+<!-- 		// 삭제 -->
+<!-- 		public int delete(String seq) throws ClassNotFoundException, SQLException; -->
+<delete id="delete">
+	DELETE FROM NOTICES
+	WHERE SEQ = #{seq}
+</delete>
+<!-- 		// 수정 -->
+<!-- 		public int update(NoticeVO notice) throws ClassNotFoundException, SQLException; -->
+<update id="update">
+	UPDATE NOTICES
+	SET TITLE = #{title}, CONTENT = #{content}
+	<if test="filesrc != null">
+		, FILESRC = #{filesrc}
+	</if>
+	WHERE SEQ = #{seq}
+</update>
+<!-- 		// 조회 -->
+<!-- 		public NoticeVO getNotice(String seq) throws ClassNotFoundException, SQLException; -->
+<select id="getNotice" resultType="org.doit.ky.domain.NoticeVO">
+	SELECT *
+	FROM NOTICES
+	WHERE SEQ = #{seq}
+</select>
+<!-- 		// 추가 -->
+<!-- 		public int insert(NoticeVO vo) throws ClassNotFoundException, SQLException; -->
+<insert id="insert">
+	<selectKey order="BEFORE" resultType="String" keyProperty="seq">
+		SELECT NVL(MAX(TO_NUMBER(SEQ))+1, 1)
+		FROM NOTICES
+	</selectKey>
+	INSERT INTO NOTICES 
+	( SEQ, TITLE, CONTENT, WRITER, REGDATE, HIT, FILESRC)
+	VALUES 
+	( #{ seq } , #{ title } , #{ content }, #{ writer }, SYSDATE, 0, #{filesrc, javaType=String, jdbcType=VARCHAR} )
+</insert>
+<!-- <update id="insert"> -->
+<!-- 		UPDATE member -->
+<!-- 		SET point = point + 1 -->
+<!-- 		WHERE id = #{id} -->
+<!-- </update> -->
+
+<!-- 		public void hithp(String seq) throws ClassNotFoundException, SQLException; -->
+<update id="hithp">
+	UPDATE notices
+	SET hit = hit + 1
+	WHERE seq = #{seq}
+</update>
+<!-- 		public int getHit(String seq) throws ClassNotFoundException, SQLException; -->
+<select id="getHit" resultType="Integer">
+	SELECT hit 
+	FROM notices 
+	WHERE seq = #{seq}
+</select>
+
+</mapper>

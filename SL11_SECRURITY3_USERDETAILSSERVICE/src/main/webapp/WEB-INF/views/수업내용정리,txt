@@ -1,0 +1,71 @@
+1. tbl_board 게시판
+   member    회원
+
+2. 스프링 시큐리티와 인증/권한 처리
+ [ 인 메모리 인증 방식 ] X 
+	   <security:user-service>
+         <security:user name="bob" authorities="ROLE_USER" password="{noop}1004" />         
+         <security:user name="admin" authorities="ROLE_USER, ROLE_MANAGER, ROLE_ADMIN" password="{noop}1004"/>
+       </security:user-service>
+ [ JDBC 연동 인증 방식 ] O
+
+3. 스프링 시큐리티의 회원 테이블
+ create table users{
+   username varchar2(50) NOT null primary key
+  ,password varchar2(50) not null
+  ,enabled char(1) default '1'          
+ }
+ create table authorities{
+   username varchar2(50) NOT null
+  ,authority varchar2(50) not null
+  ,constraint fk_test foreign key(username) references users(username)
+ }
+
+4. security-context.xml
+ <security:jdbc-user-service data-source-ref="dataSource"/>
+ 
+5. 기존의 테이블 member 사용 + member_authorities 테이블 생성
+ member
+  id as username
+  pwd as password
+  enabled 추가
+   authorities (권한) 테이블 생성
+  CREATE TABLE member_authorities(
+   username     varchar2(50) not null      
+  , authority    varchar2(50) not null 
+  , constraint fk_member_authorities_username 
+               FOREIGN KEY(username) 
+               REFERENCES member(id)
+);
+
+6. PasswordEncoder 임시 사용 X {noop}
+ 스프링 제공하는 passwordEncoder 빈 등록 설정
+ <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+   <security:authentication-manager>
+     <security:authentication-provider>     
+       <security:jdbc-user-service 
+       data-source-ref="dataSource"
+       users-by-username-query="SELECT id AS USERNAME, pwd AS PASSWORD, enabled FROM member WHERE id = ?"
+       authorities-by-username-query="SELECT username AS userid, authority AS auth FROM member_authorities WHERE username = ?  " 
+       />
+       <security:password-encoder ref="bCryptPasswordEncoder" />
+     </security:authentication-provider> 
+   </security:authentication-manager>
+
+ JoinController 수정
+ join.jsp <input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }" /> 확인
+ @Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@PostMapping("/join.htm")
+	public String join(MemberVO vo) throws Exception{
+		
+		String pwd = vo.getPwd();
+		vo.setPwd(this.passwordEncoder.encode(pwd));
+		
+		this.dao.insert(vo);
+		return "redirect:../index.htm";
+	}
+ 회원가입 페이지 계정 3개 추가
+ 
+ 
