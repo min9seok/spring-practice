@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.doit.ky.mapper.BookMapper">
+
+   <select id="list" resultType="org.doit.ky.domain.BookDTO">
+      select seq, title, image, discount, author, publisher
+      from tblBook
+      order by seq asc
+   </select>
+
+   <select id="get" resultType="org.doit.ky.domain.BookDTO">
+      select * from tblBook
+      where seq = #{seq}
+   </select>
+
+   <insert id="add">
+      <selectKey keyProperty="seq" resultType="String" order="BEFORE">
+         select max(seq) + 1 from tblBook
+      </selectKey>
+      insert into tblBook (seq, title, link, description, image, author, discount, publisher, isbn, pubdate) 
+      values (#{seq}, #{title}, #{link}, #{description}, #{image}, #{author}, #{discount}, #{publisher}, #{isbn}, #{pubdate})
+   </insert>
+
+</mapper>
